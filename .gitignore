@@ -2,7 +2,7 @@
 backup
 
 # Custom files (*sh includes sh, bash, zsh)
-custom/**/*.*sh
+# custom/**/*.*sh
 
 # Home Configs
 home/.config/*
