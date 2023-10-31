@@ -1,19 +1,3 @@
-alias gproj="gcloud projects list | /usr/bin/grep $(gcloud config get-value project)"
-alias gs="gcloud projects list | /usr/bin/egrep \$1"
-alias gc="get_creds"
-alias ampass="kubectl get secret am-login --namespace fr-platform -o json | jq .data.password -r | base64 -d"
-alias fqdn="kubectl get configmap/platform-config -n fr-platform -o json | jq .data.FQDN | tr -d '\042'"
-
-alias saas="cd $SAAS_PATH"
-
-alias codesaas="cd /Users/teodor.standavid/Documents/Workspaces\ VSCode; code -n saas.code-workspace"
-
-alias chrome_cli="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window"
-alias chw="chrome_cli --profile-directory="Default""
-alias chp="chrome_cli --profile-directory='Profile 1'"
-alias chio="chrome_cli --profile-directory='Profile 3'"
-alias chsa="chrome_cli --profile-directory='Profile 4'"
-
 export SAAS_PATH=$HOME/go/src/github.com/ForgeCloud/saas
 export PATH="$(brew --prefix)/bin/:$PATH"
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
@@ -52,3 +36,21 @@ if [ -f '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc' ]; then sou
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+
+alias gproj="gcloud projects list | /usr/bin/grep $(gcloud config get-value project)"
+alias gs="gcloud projects list | /usr/bin/egrep \$1"
+alias gc="get_creds"
+alias ampass="kubectl get secret am-login --namespace fr-platform -o json | jq .data.password -r | base64 -d"
+alias fqdn="kubectl get configmap/platform-config -n fr-platform -o json | jq .data.FQDN | tr -d '\042'"
+
+alias saas="cd $SAAS_PATH"
+
+alias codesaas="cd /Users/teodor.standavid/Documents/Workspaces\ VSCode; code -n saas.code-workspace"
+
+alias chrome_cli="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --new-window"
+alias chw="chrome_cli --profile-directory="Default""
+alias chp="chrome_cli --profile-directory='Profile 1'"
+alias chio="chrome_cli --profile-directory='Profile 3'"
+alias chsa="chrome_cli --profile-directory='Profile 4'"
+
+source /usr/local/opt/asdf/libexec/asdf.sh
