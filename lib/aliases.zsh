@@ -84,5 +84,5 @@ if _exists bat; then
   # Run to list all themes:
   #   bat --list-themes
   export BAT_THEME='base16'
-  alias cat='bat'
+  # alias cat='bat'
 fi

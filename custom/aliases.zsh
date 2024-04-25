@@ -13,8 +13,7 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 export GOROOT="$HOME/.gobrew/current/go"
 export TERM="xterm-256color"
-# export SPACESHIP_KUBECTL_SHOW="true"
-# export SPACESHIP_KUBECTL_ASYNC="false"
+export PATH="$HOME/go/bin:$PATH"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
@@ -23,11 +22,11 @@ export NVM_DIR="$HOME/.nvm"
 source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/tylerthrailkill/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/tylerthrailkill/google-cloud-sdk/path.zsh.inc'; fi
+# # The next line updates PATH for the Google Cloud SDK.
+# if [ -f '/Users/tylerthrailkill/google-cloud-sdk/path.zsh.inc' ]; then source '/Users/tylerthrailkill/google-cloud-sdk/path.zsh.inc'; fi
 
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc'; fi
+# # The next line enables shell command completion for gcloud.
+# if [ -f '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc' ]; then source '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc'; fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -37,9 +36,10 @@ if [ -f '/Users/tylerthrailkill/google-cloud-sdk/completion.zsh.inc' ]; then sou
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+
 alias gproj="gcloud projects list | /usr/bin/grep $(gcloud config get-value project)"
 alias gs="gcloud projects list | /usr/bin/egrep \$1"
-alias gc="get_creds"
+alias gc="forge configure local-gcp-k8s"
 alias ampass="kubectl get secret am-login --namespace fr-platform -o json | jq .data.password -r | base64 -d"
 alias fqdn="kubectl get configmap/platform-config -n fr-platform -o json | jq .data.FQDN | tr -d '\042'"
 
@@ -54,3 +54,33 @@ alias chio="chrome_cli --profile-directory='Profile 3'"
 alias chsa="chrome_cli --profile-directory='Profile 4'"
 
 source /usr/local/opt/asdf/libexec/asdf.sh
+
+alias root="cd $(git rev-parse --show-toplevel)"
+alias saas-api="findcd saas-api"
+alias saas-ema="findcd saas-ema"
+alias org-engine="findcd org-engine"
+alias saas-worker="findcd saas-worker"
+
+findcd() {
+    local folder="$1"
+    local found_dirs=($(find $(git rev-parse --show-toplevel) -type d -name "$folder" -print))
+
+    if [ ${#found_dirs[@]} -eq 1 ]; then
+        cd "${found_dirs[1]}"
+        echo "Navigated to ${found_dirs[1]}"
+    elif [ ${#found_dirs[@]} -gt 1 ]; then
+        selected_dir=$(printf "%s\n" "${found_dirs[@]}" |  fzf --height 40% --layout reverse --info inline --border \
+    --preview 'file {}' --preview-window up,1,border-horizontal \
+    --bind 'ctrl-/:change-preview-window(50%|hidden|)' \
+    --color 'fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899' \
+    --prompt="Select a folder: ")
+        if [ -n "$selected_dir" ]; then
+            cd "$selected_dir"
+            echo "Navigated to $selected_dir"
+        else
+            echo "No folder selected. No navigation performed."
+        fi
+    else
+        echo "Folder '$folder' not found."
+    fi
+}

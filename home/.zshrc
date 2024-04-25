@@ -30,6 +30,7 @@ _extend_path() {
 }
 
 # Add custom bin to $PATH
+_extend_path "/usr/local/opt/coreutils/libexec/gnubin"
 _extend_path "$HOME/.local/bin"
 _extend_path "$DOTFILES/bin"
 _extend_path "$HOME/.npm-global/bin"
@@ -129,3 +130,4 @@ if [[ -f "$HOME/.zshlocal" ]]; then
   source "$HOME/.zshlocal"
 fi
 autoload -U compinit; compinit
+eval "$(pyenv init -)"

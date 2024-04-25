@@ -153,7 +153,7 @@
 	cookiefile = /Users/teodor.standavid/.gitcookies
 
 [include]
-  path = ~/.gitlocal
+  path = ~/.gitconfig-work
 [includeIf "gitdir:~/personal/"]
   path = ~/.gitconfig-personal
 [includeIf "gitdir:~/.dotfiles/"]
@@ -161,3 +161,7 @@
 [includeIf "gitdir:/Users/teodor.standavid/go/src/github.com/ForgeCloud/saas/"]
   path = ~/.gitconfig-work
 
+[commit]
+	gpgsign = true
+[hub]
+	protocol = ssh
