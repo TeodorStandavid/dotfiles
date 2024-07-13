@@ -130,4 +130,29 @@ if [[ -f "$HOME/.zshlocal" ]]; then
   source "$HOME/.zshlocal"
 fi
 autoload -U compinit; compinit
+
+#Pyenv
 eval "$(pyenv init -)"
+
+#Starship
+
+precmd_functions+=(set_win_title)
+
+function blastoff(){
+    echo "test"
+}
+function set_win_title(){
+    echo -ne "\033]0; $(basename "$PWD") \007"
+}
+eval "$(starship init zsh)"
+
+#Google Cloud
+source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
+export USE_GKE_GCLOUD_AUTH_PLUGIN=true
+
+
+
+
+
+

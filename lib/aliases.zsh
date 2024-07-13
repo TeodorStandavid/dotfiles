@@ -7,14 +7,14 @@
 alias sudo='sudo '
 
 _exists() {
-  command -v $1 > /dev/null 2>&1
+    command -v $1 > /dev/null 2>&1
 }
 
 # Avoid stupidity with trash-cli:
 # https://github.com/sindresorhus/trash-cli
 # or use default rm -i
 if _exists trash; then
-  alias rm='trash'
+    alias rm='trash'
 fi
 
 # Just bcoz clr shorter than clear
@@ -67,22 +67,26 @@ alias get="curl -O -L"
 
 # Use tldr as help util
 if _exists tldr; then
-  alias help="tldr"
+    alias help="tldr"
 fi
 
 alias git-root='cd $(git rev-parse --show-toplevel)'
 
 if _exists lsd; then
-  unalias ls
-  alias ls='lsd'
-  alias lt='lsd --tree'
+    unalias ls
+    alias ls='lsd'
+    alias lt='lsd --tree'
+else
+    unalias ls
+    alias ls='ls --color=auto'
+    alias ll='ls -lah --color=auto'
 fi
 
 # cat with syntax highlighting
 # https://github.com/sharkdp/bat
 if _exists bat; then
-  # Run to list all themes:
-  #   bat --list-themes
-  export BAT_THEME='base16'
-  # alias cat='bat'
+    # Run to list all themes:
+    #   bat --list-themes
+    export BAT_THEME='base16'
+    # alias cat='bat'
 fi

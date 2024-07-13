@@ -43,6 +43,8 @@ alias gc="forge configure local-gcp-k8s"
 alias ampass="kubectl get secret am-login --namespace fr-platform -o json | jq .data.password -r | base64 -d"
 alias fqdn="kubectl get configmap/platform-config -n fr-platform -o json | jq .data.FQDN | tr -d '\042'"
 
+alias fdir="fd -t d | fzf"
+
 alias saas="cd $SAAS_PATH"
 
 alias codesaas="cd /Users/teodor.standavid/Documents/Workspaces\ VSCode; code -n saas.code-workspace"
@@ -54,33 +56,52 @@ alias chio="chrome_cli --profile-directory='Profile 3'"
 alias chsa="chrome_cli --profile-directory='Profile 4'"
 
 source /usr/local/opt/asdf/libexec/asdf.sh
+fpath=(${ASDF_DIR}/completions $fpath)
+autoload -Uz compinit
+compinit
 
-alias root="cd $(git rev-parse --show-toplevel)"
-alias saas-api="findcd saas-api"
-alias saas-ema="findcd saas-ema"
-alias org-engine="findcd org-engine"
-alias saas-worker="findcd saas-worker"
+alias root="findcd_wrapper"
+alias saas-api="findcd_wrapper saas-api"
+alias saas-ema="findcd_wrapper saas-ema"
+alias org-engine="findcd_wrapper org-engine"
+alias saas-worker="findcd_wrapper saas-worker"
+
+findcd_wrapper(){
+    
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        findcd $@
+    else
+        echo "Not inside a Git repository"
+    fi
+    
+}
 
 findcd() {
     local folder="$1"
-    local found_dirs=($(find $(git rev-parse --show-toplevel) -type d -name "$folder" -print))
-
-    if [ ${#found_dirs[@]} -eq 1 ]; then
-        cd "${found_dirs[1]}"
-        echo "Navigated to ${found_dirs[1]}"
-    elif [ ${#found_dirs[@]} -gt 1 ]; then
-        selected_dir=$(printf "%s\n" "${found_dirs[@]}" |  fzf --height 40% --layout reverse --info inline --border \
-    --preview 'file {}' --preview-window up,1,border-horizontal \
-    --bind 'ctrl-/:change-preview-window(50%|hidden|)' \
-    --color 'fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899' \
-    --prompt="Select a folder: ")
-        if [ -n "$selected_dir" ]; then
-            cd "$selected_dir"
-            echo "Navigated to $selected_dir"
-        else
-            echo "No folder selected. No navigation performed."
-        fi
+    
+    if [ -z "$folder" ]; then
+        cd $(git rev-parse --show-toplevel)
     else
-        echo "Folder '$folder' not found."
+        
+        local found_dirs=($(find $(git rev-parse --show-toplevel) -type d -name "$folder" -print))
+        
+        if [ ${#found_dirs[@]} -eq 1 ]; then
+            cd "${found_dirs[1]}"
+            echo "Navigated to ${found_dirs[1]}"
+            elif [ ${#found_dirs[@]} -gt 1 ]; then
+            selected_dir=$(printf "%s\n" "${found_dirs[@]}" |  fzf --height 40% --layout reverse --info inline --border \
+                --preview 'file {}' --preview-window up,1,border-horizontal \
+                --bind 'ctrl-/:change-preview-window(50%|hidden|)' \
+                --color 'fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899' \
+            --prompt="Select a folder: ")
+            if [ -n "$selected_dir" ]; then
+                cd "$selected_dir"
+                echo "Navigated to $selected_dir"
+            else
+                echo "No folder selected. No navigation performed."
+            fi
+        else
+            echo "Folder '$folder' not found."
+        fi
     fi
 }

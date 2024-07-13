@@ -1,0 +1,4 @@
+#!/bin/bash
+
+if [ -n "$FORGE_SHELL_SOCKET" ]; then exit 0; fi; exit 1
+
