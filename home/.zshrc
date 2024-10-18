@@ -151,6 +151,8 @@ source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
 source "$(brew --prefix)/share/google-cloud-sdk/completion.zsh.inc"
 export USE_GKE_GCLOUD_AUTH_PLUGIN=true
 
+#Libgit2
+export DYLD_LIBRARY_PATH="/usr/local/lib"
 
 
 

@@ -10,4 +10,5 @@ home/.config/*
 !home/.config/gh/config.yml
 !home/.config/kitty/*
 !home/.config/skhd/skhdrc
+!home/.config/starship.toml
 
