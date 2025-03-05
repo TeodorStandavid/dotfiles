@@ -38,6 +38,8 @@ _extend_path "$HOME/.rvm/bin"
 _extend_path "$HOME/.yarn/bin"
 _extend_path "$HOME/.config/yarn/global/node_modules/.bin"
 _extend_path "$HOME/.bun/bin"
+_extend_path "$HOME/go"
+
 
 # Default pager
 export PAGER='less'
@@ -153,6 +155,12 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=true
 
 #Libgit2
 export DYLD_LIBRARY_PATH="/usr/local/lib"
+
+export GOPATH=$HOME/go
+
+export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+
+
 
 
 
