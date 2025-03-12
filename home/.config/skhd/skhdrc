@@ -1,0 +1,166 @@
+#  NOTE(koekeishiya): A list of all built-in modifier and literal keywords can
+#                     be found at https://github.com/koekeishiya/skhd/issues/1
+#
+#                     A hotkey is written according to the following rules:
+#
+#                       hotkey       = <mode> '<' <action> | <action>
+#
+#                       mode         = 'name of mode' | <mode> ',' <mode>
+#
+#                       action       = <keysym> '[' <proc_map_lst> ']' | <keysym> '->' '[' <proc_map_lst> ']'
+#                                      <keysym> ':' <command>          | <keysym> '->' ':' <command>
+#                                      <keysym> ';' <mode>             | <keysym> '->' ';' <mode>
+#
+#                       keysym       = <mod> '-' <key> | <key>
+#
+#                       mod          = 'modifier keyword' | <mod> '+' <mod>
+#
+#                       key          = <literal> | <keycode>
+#
+#                       literal      = 'single letter or built-in keyword'
+#
+#                       keycode      = 'apple keyboard kVK_<Key> values (0x3C)'
+#
+#                       proc_map_lst = * <proc_map>
+#
+#                       proc_map     = <string> ':' <command> | <string>     '~' |
+#                                      '*'      ':' <command> | '*'          '~'
+#
+#                       string       = '"' 'sequence of characters' '"'
+#
+#                       command      = command is executed through '$SHELL -c' and
+#                                      follows valid shell syntax. if the $SHELL environment
+#                                      variable is not set, it will default to '/bin/bash'.
+#                                      when bash is used, the ';' delimeter can be specified
+#                                      to chain commands.
+#
+#                                      to allow a command to extend into multiple lines,
+#                                      prepend '\' at the end of the previous line.
+#
+#                                      an EOL character signifies the end of the bind.
+#
+#                       ->           = keypress is not consumed by skhd
+#
+#                       *            = matches every application not specified in <proc_map_lst>
+#
+#                       ~            = application is unbound and keypress is forwarded per usual, when specified in a <proc_map>
+#
+#  NOTE(koekeishiya): A mode is declared according to the following rules:
+#
+#                       mode_decl = '::' <name> '@' ':' <command> | '::' <name> ':' <command> |
+#                                   '::' <name> '@'               | '::' <name>
+#
+#                       name      = desired name for this mode,
+#
+#                       @         = capture keypresses regardless of being bound to an action
+#
+#                       command   = command is executed through '$SHELL -c' and
+#                                   follows valid shell syntax. if the $SHELL environment
+#                                   variable is not set, it will default to '/bin/bash'.
+#                                   when bash is used, the ';' delimeter can be specified
+#                                   to chain commands.
+#
+#                                   to allow a command to extend into multiple lines,
+#                                   prepend '\' at the end of the previous line.
+#
+#                                   an EOL character signifies the end of the bind.
+
+# add an on_enter command to the default mode
+:: default : yabai -m config active_window_border_color 0xff775759
+#
+# defines a new mode 'test' with an on_enter command, that captures keypresses
+# :: test @ : yabai -m config active_window_border_color 0xff24ccaa
+#
+# from 'default' mode, activate mode 'test'
+# cmd - x ; test
+#
+# from 'test' mode, activate mode 'default'
+# test < cmd - x ; default
+#
+# launch a new terminal instance when in either 'default' or 'test' mode
+# default, test < cmd - return : open -na /Applications/Terminal.app
+
+# application specific bindings
+#
+# cmd - n [
+#     "kitty"       : echo "hello kitty"
+#     *             : echo "hello everyone"
+#     "qutebrowser" : echo "hello qutebrowser"
+#     "terminal"    ~
+#     "finder"      : false
+# ]
+
+# specify a file that should be included as an additional config-file.
+# treated as an absolutepath if the filename begins with '/' otherwise
+# the file is relative to the path of the config-file it was loaded from.
+#
+# .load "/Users/Koe/.config/partial_skhdrc"
+# .load "partial_skhdrc"
+
+# prevent skhd from monitoring events for specific applications.
+#
+# .blacklist [
+#    "kitty"
+#    "terminal"
+#    "qutebrowser"
+# ]
+
+# for this to work you must configure sudo such that
+# it will be able to run the command without password
+
+# open terminal, blazingly fast compared to iTerm/Hyper
+cmd - return : /Applications/kitty.app/Contents/MacOS/kitty --single-instance -d ~
+
+# open qutebrowser
+cmd + shift - return : ~/Scripts/qtb.sh
+
+# open mpv
+cmd - m : open -na /Applications/mpv.app $(pbpaste)
+
+#open chrome
+# alias chw="chrome_cli --profile-directory="Default""
+# alias chp="chrome_cli --profile-directory='Profile 1'"
+# alias chio="chrome_cli --profile-directory='Profile 3'"
+# alias chsa="chrome_cli --profile-directory='Profile 4'"
+
+cmd + shift - 6 : /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory="Default" --new-window
+cmd + shift - 7 : /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory="Profile 3" --new-window https://console.cloud.google.com/
+cmd + shift - 8 : /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory="Profile 4" --new-window https://console.cloud.google.com/
+cmd + shift - 9 : /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --profile-directory="Profile 1" --new-window
+cmd + shift - 0 : /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome  --args --user-data-dir=$(mktemp -d)
+
+alt - k : yabai -m query --spaces --space \
+| jq -re ".index" \
+| xargs -I{} yabai -m query --windows --space {} \
+| jq -sre 'add | map(select(."is-minimized"==false)) | sort_by(.display, .frame.y, .frame.x, .id) | . as $array | length as $array_length | index(map(select(."has-focus"==true))) as $has_index | if $has_index > 0 then nth($has_index - 1).id else nth($array_length - 1).id end' \
+| xargs -I{} yabai -m window --focus {}
+
+alt - j : yabai -m query --spaces --space \
+| jq -re ".index" \
+| xargs -I{} yabai -m query --windows --space {} \
+| jq -sre 'add | map(select(."is-minimized"==false)) | sort_by(.display, .frame.y, .frame.x, .id) | . as $array | length as $array_length | index(map(select(."has-focus"==true))) as $has_index | if $array_length - 1 > $has_index then nth($has_index + 1).id else nth(0).id end' \
+| xargs -I{} yabai -m window --focus {}
+
+# alt - f : yabai -m window --focus stack.first
+# alt - n : yabai -m window --focus stack.recent
+hyper - p : yabai -m space --layout bsp &&  yabai -m space --padding abs:40:0:40:0
+
+hyper - f : yabai -m space --layout float
+
+hyper - a : yabai -m space --padding abs:0:0:40:0
+
+hyper - t : yabai -m window --toggle zoom-fullscreen
+
+hyper - r : yabai --restart-service
+
+hyper - 1 : yabai -m window --space 1
+hyper - 2 : yabai -m window --space 2
+hyper - 3 : yabai -m window --space 3
+hyper - 4 : yabai -m window --space 4
+hyper - 5 : yabai -m window --space 5
+hyper - 6 : yabai -m window --space 6
+
+
+
+
+

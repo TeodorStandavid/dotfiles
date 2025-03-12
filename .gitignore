@@ -8,7 +8,14 @@ backup
 home/.config/*
 !home/.config/sheldon
 !home/.config/gh/config.yml
-!home/.config/kitty/*
-!home/.config/skhd/skhdrc
+!home/.config/kitty/
+!home/.config/kitty/**
+!home/.config/skhd/
+!home/.config/skhd/**
 !home/.config/starship.toml
+!home/.config/completions
+!home/.config/completions/**
+!home/.config/karabiner
+!home/.config/karabiner/**
+
 
